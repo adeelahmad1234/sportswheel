@@ -61,6 +61,14 @@ export default function LeagueSection({ league, fetchStats }) {
     return excludeYears?.length ? years.filter(y => !excludeYears.includes(y)) : years
   }, [minYear, excludeYears])
 
+  // "To" can never go below "From" — it can only match it (a single-year spinner) or exceed it.
+  const selectableYearsTo = useMemo(() => selectableYears.filter(y => y >= yearFrom), [selectableYears, yearFrom])
+
+  function handleYearFromChange(value) {
+    setYearFrom(value)
+    if (yearTo < value) setYearTo(value)
+  }
+
   const yearItems = useMemo(() => {
     const from = Math.max(minYear, Math.min(yearFrom, yearTo))
     const to = Math.max(from, yearTo)
@@ -150,14 +158,14 @@ export default function LeagueSection({ league, fetchStats }) {
             Year Range
           </span>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <select value={yearFrom} onChange={e => setYearFrom(Number(e.target.value))}
+            <select value={yearFrom} onChange={e => handleYearFromChange(Number(e.target.value))}
               style={{ padding: '6px 12px', borderRadius: 8, fontSize: 14, fontWeight: 600, outline: 'none', background: theme.surface, color: theme.text, border: `1px solid ${theme.borderSubtle}`, cursor: 'pointer' }}>
               {selectableYears.map(y => <option key={y} value={y}>{seasonLabel(y)}</option>)}
             </select>
             <span style={{ color: theme.textMuted }}>→</span>
             <select value={yearTo} onChange={e => setYearTo(Number(e.target.value))}
               style={{ padding: '6px 12px', borderRadius: 8, fontSize: 14, fontWeight: 600, outline: 'none', background: theme.surface, color: theme.text, border: `1px solid ${theme.borderSubtle}`, cursor: 'pointer' }}>
-              {[...selectableYears].reverse().map(y => <option key={y} value={y}>{seasonLabel(y)}</option>)}
+              {[...selectableYearsTo].reverse().map(y => <option key={y} value={y}>{seasonLabel(y)}</option>)}
             </select>
           </div>
         </div>
