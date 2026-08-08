@@ -5,7 +5,8 @@ import { groupByStatShape, labelForStatKeys } from '../utils/positionGroups'
 import { findGuessMatches } from '../utils/nameMatch'
 import { fullPositionName } from '../utils/positionNames'
 import { GREEN, RED } from '../utils/statusColors'
-import RewardEffect from './RewardEffect'
+import { getResultTier } from '../utils/resultTiers'
+import ResultEffect from './ResultEffect'
 
 function jerseyValue(p) {
   const n = parseInt(p.jersey)
@@ -121,7 +122,7 @@ export default function GuessGame({
   const { theme } = useTheme()
   const [input, setInput] = useState('')
   const [shake, setShake] = useState(false)
-  const [celebrate, setCelebrate] = useState(false)
+  const [showResultEffect, setShowResultEffect] = useState(false)
   const [positionsRevealed, setPositionsRevealed] = useState(false)
   const [jerseysRevealed, setJerseysRevealed] = useState(false)
   const [remaining, setRemaining] = useState(timerDuration || null)
@@ -132,13 +133,18 @@ export default function GuessGame({
   const total = players?.length || 0
   const guessedCount = Object.values(statuses).filter(s => s === 'guessed').length
   const done = total > 0 && guessedCount === total
+  const locked = gaveUp || done
+  const tier = useMemo(() => getResultTier(guessedCount, total), [guessedCount, total])
 
+  // Fires once per game-ending event (full completion, Give Up, or timeout) — the tier
+  // (and therefore the effect/message shown) reflects whatever percentage was correctly
+  // guessed at that point, not just a 100% finish.
   useEffect(() => {
-    if (!done) return
-    setCelebrate(true)
-    const t = setTimeout(() => setCelebrate(false), 1100)
+    if (!locked) return
+    setShowResultEffect(true)
+    const t = setTimeout(() => setShowResultEffect(false), tier?.key === 'elite' ? 1800 : tier?.key === 'good' ? 1400 : 1000)
     return () => clearTimeout(t)
-  }, [done])
+  }, [locked])
 
   // Reveals every not-yet-guessed player as 'revealed' (red) — shared by the manual Give Up
   // button and the timeout path below, so a game that ends by running out of time flips the
@@ -171,8 +177,6 @@ export default function GuessGame({
 
   if (!players || players.length === 0) return null
 
-  const locked = gaveUp || done
-
   function submitGuess(e) {
     e.preventDefault()
     if (locked) return
@@ -197,7 +201,7 @@ export default function GuessGame({
 
   return (
     <div style={{ position: 'relative', width: '100%' }}>
-      <RewardEffect show={celebrate} accentColor={accentColor} />
+      <ResultEffect show={showResultEffect} tier={tier?.key} color={tier?.color} />
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 28, alignItems: 'flex-start' }}>
         {/* Player boxes */}
         <div style={{ flex: '3 1 480px', minWidth: 280 }}>
@@ -287,9 +291,22 @@ export default function GuessGame({
               </button>
             </form>
           ) : (
-            <p style={{ margin: 0, fontSize: 15, fontWeight: 800, color: done ? GREEN : timeExpired ? RED : theme.textMuted }}>
-              {done ? '🎉 Full roster guessed!' : timeExpired ? '⏰ Time\'s up!' : 'Roster revealed'}
-            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <p style={{ margin: 0, fontSize: 12, fontWeight: 700, color: theme.textMuted }}>
+                {done ? '🎉 Full roster guessed!' : timeExpired ? '⏰ Time\'s up!' : 'Roster revealed'} · {guessedCount}/{total} correct
+              </p>
+              {tier && (
+                <motion.p
+                  key={tier.key}
+                  initial={{ opacity: 0, y: 8, scale: 0.9 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ type: 'spring', stiffness: 260, damping: 16 }}
+                  style={{ margin: 0, fontSize: 20, fontWeight: 900, letterSpacing: '-0.01em', color: tier.color }}
+                >
+                  {tier.message}
+                </motion.p>
+              )}
+            </div>
           )}
 
           {!locked && (
