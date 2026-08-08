@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ThemeProvider, THEMES, useTheme } from './context/ThemeContext'
 import LeagueSection from './components/LeagueSection'
@@ -15,6 +15,22 @@ const TABS = [
   { id: 'NHL', fetch: fetchNHLStats },
   { id: 'MLB', fetch: fetchMLBStats },
 ]
+
+const MOBILE_BREAKPOINT = 640
+
+// Drives the nav header layout only — everything else in the app is already responsive via
+// CSS (flex-wrap, clamp(), etc.), but the header is a fixed 3-column grid that has no room to
+// breathe on narrow screens, so it needs to restructure into stacked rows instead.
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= MOBILE_BREAKPOINT)
+  useEffect(() => {
+    const mq = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT}px)`)
+    const handler = e => setIsMobile(e.matches)
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [])
+  return isMobile
+}
 
 function ThemePicker() {
   const { theme, setTheme } = useTheme()
@@ -50,20 +66,26 @@ function AppInner() {
   const [activeTab, setActiveTab] = useState('NBA')
   const active = TABS.find(t => t.id === activeTab)
   const league = LEAGUES[activeTab]
+  const isMobile = useIsMobile()
 
   return (
     <div style={{ minHeight: '100vh', background: theme.bg, color: theme.text, transition: 'background 0.3s, color 0.3s' }}>
-      {/* Nav */}
+      {/* Nav — desktop is a single-row 3-column grid; mobile stacks the same three blocks into
+          their own full-width rows instead, since the grid columns have no room to fit the
+          league tabs alongside the wordmark on a narrow screen. */}
       <header style={{
         position: 'sticky', top: 0, zIndex: 30,
-        display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center',
-        padding: '12px 24px',
+        display: 'grid',
+        gridTemplateColumns: isMobile ? '1fr' : '1fr auto 1fr',
+        alignItems: 'center',
+        gap: isMobile ? 12 : 0,
+        padding: isMobile ? '14px 16px' : '12px 24px',
         background: theme.navBg,
         backdropFilter: 'blur(16px)',
         borderBottom: `1px solid ${theme.border}`,
       }}>
         {/* Left: theme picker */}
-        <div style={{ justifySelf: 'start' }}>
+        <div style={{ justifySelf: isMobile ? 'center' : 'start' }}>
           <ThemePicker />
         </div>
 
@@ -90,7 +112,13 @@ function AppInner() {
         </div>
 
         {/* Right: league tabs */}
-        <nav style={{ justifySelf: 'end', display: 'flex', gap: 4 }}>
+        <nav style={{
+          justifySelf: isMobile ? 'center' : 'end',
+          display: 'flex',
+          flexWrap: isMobile ? 'wrap' : 'nowrap',
+          justifyContent: 'center',
+          gap: isMobile ? 8 : 4,
+        }}>
           {TABS.map(tab => {
             const isActive = tab.id === activeTab
             const tl = LEAGUES[tab.id]
