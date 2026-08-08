@@ -69,7 +69,7 @@ function AppInner() {
 
         {/* Center: wordmark — grid column keeps this on the true viewport center regardless of how wide the side columns are */}
         <span style={{ justifySelf: 'center', fontSize: 20, fontWeight: 900, letterSpacing: '-0.03em', color: theme.text, whiteSpace: 'nowrap' }}>
-          Sports<span style={{ color: league.color }}>Wheel</span>
+          League<span style={{ color: league.color }}>Wheel</span>
         </span>
 
         {/* Right: league tabs */}
@@ -172,7 +172,7 @@ function AppInner() {
 
       {/* Footer */}
       <footer style={{ textAlign: 'center', padding: '20px 0', fontSize: 12, color: theme.textMuted, borderTop: `1px solid ${theme.border}` }}>
-        SportsWheel · Stats via official league APIs · For personal use only
+        LeagueWheel · Stats via official league APIs · For personal use only
       </footer>
     </div>
   )

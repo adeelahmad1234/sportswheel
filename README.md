@@ -1,4 +1,4 @@
-# SportsWheel
+# LeagueWheel
 
 A minimalistic, aesthetically pleasing sports stats web app. Spin two slot-machine-style wheels — one for year, one for team — then land in a "guess the roster" game for that team's season, with the full stats table one tap away under an "Answers" toggle.
 
