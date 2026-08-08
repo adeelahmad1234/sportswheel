@@ -67,10 +67,27 @@ function AppInner() {
           <ThemePicker />
         </div>
 
-        {/* Center: wordmark — grid column keeps this on the true viewport center regardless of how wide the side columns are */}
-        <span style={{ justifySelf: 'center', fontSize: 20, fontWeight: 900, letterSpacing: '-0.03em', color: theme.text, whiteSpace: 'nowrap' }}>
-          League<span style={{ color: league.color }}>Wheel</span>
-        </span>
+        {/* Center: league logo strip + wordmark — grid column keeps this on the true viewport center regardless of how wide the side columns are */}
+        <div style={{ justifySelf: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            {TABS.map(tab => {
+              const tl = LEAGUES[tab.id]
+              if (!tl.logo) return null
+              return (
+                <img
+                  key={tab.id}
+                  src={tl.logo}
+                  alt={`${tl.label} logo`}
+                  style={{ width: 18, height: 18, objectFit: 'contain' }}
+                  onError={e => { e.target.style.display = 'none' }}
+                />
+              )
+            })}
+          </div>
+          <span style={{ fontSize: 20, fontWeight: 900, letterSpacing: '-0.03em', color: theme.text, whiteSpace: 'nowrap' }}>
+            League<span style={{ color: league.color }}>Wheel</span>
+          </span>
+        </div>
 
         {/* Right: league tabs */}
         <nav style={{ justifySelf: 'end', display: 'flex', gap: 4 }}>
