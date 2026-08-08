@@ -5,7 +5,7 @@ export const LEAGUES = {
     color: '#C9082A',
     logo: 'https://a.espncdn.com/i/teamlogos/leagues/500/nba.png',
     minYear: 1990,
-    description: 'Free NBA stats and roster guessing game — spin to land on any NBA team and season since 1990, then name every player from memory in a fast roster quiz built on live NBA stats and historical box scores, or flip to Answers for the full stat line.',
+    description: 'Free NBA stats and roster guessing game! Spin to land on any NBA team and season since 1990, then name every player from memory in a fast roster quiz! Full team stats available as well.',
     divisions: {
       'Full League': null,
       'Eastern Conference': {
@@ -59,7 +59,7 @@ export const LEAGUES = {
     color: '#013369',
     logo: 'https://a.espncdn.com/i/teamlogos/leagues/500/nfl.png',
     minYear: 2000,
-    description: 'Spin to land on any NFL team and season to explore live roster bios — the NFL roster guessing game is coming soon, once real per-player NFL stats are available.',
+    description: 'Free NFL rosters since 2000! Spin to land on any NFL team and season to explore player bios — the full roster guessing game and team stats are coming soon.',
     divisions: {
       'Full League': null,
       'AFC': {
@@ -117,7 +117,7 @@ export const LEAGUES = {
     color: '#a8a9ad',
     logo: 'https://a.espncdn.com/i/teamlogos/leagues/500/nhl.png',
     minYear: 2000,
-    description: 'Free NHL stats and roster guessing game — spin to land on any NHL team and season, then name every skater and goalie from memory in a fast roster quiz built on live stats from the official NHL API, or flip to Answers for the full box score.',
+    description: 'Free NHL stats and roster guessing game! Spin to land on any NHL team and season since 2000, then name every player from memory in a fast roster quiz! Full team stats available as well.',
     // 2004-05 season was cancelled entirely by the lockout — no games, no stats
     excludeYears: [2005],
     divisions: {
@@ -173,7 +173,7 @@ export const LEAGUES = {
     color: '#002D72',
     logo: 'https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png',
     minYear: 2000,
-    description: 'Free MLB stats and roster guessing game — spin to land on any MLB team and season, then name every hitter and pitcher from memory in a fast roster quiz built on live stats from the MLB Stats API, or flip to Answers for the full stat line.',
+    description: 'Free MLB stats and roster guessing game! Spin to land on any MLB team and season since 2000, then name every player from memory in a fast roster quiz! Full team stats available as well.',
     divisions: {
       'Full League': null,
       'American League': {
